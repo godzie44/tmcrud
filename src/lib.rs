@@ -1,19 +1,87 @@
 use serde::{Deserialize, Serialize};
 use std::os::raw::c_int;
+use std::sync::{Arc, Mutex};
+use std::thread;
+use std::thread::sleep;
+use std::time::Duration;
 use tarantool::index::IteratorType;
 use tarantool::space;
 use tarantool::tuple::{AsTuple, FunctionArgs, FunctionCtx, Tuple};
+use actix_web::{rt::System, get, post, web, App, HttpResponse, HttpServer, Responder, Result};
+use tarantool::fiber::time;
+use tarantool::net_box;
+use tarantool::net_box::Conn;
+
+#[get("/forecast/all")]
+async fn hello() -> Result<impl Responder> {
+    //let f = read_all_forecasts();
+   // println!("{:?}", f);
+
+    // read_all_forecasts();
+    //
+    // Ok("web::Json(f)")
+
+    //let res = conn.call("read", &(), &Default::default());
+
+    //let data = res.unwrap().unwrap();
+    //println!("{:?}", data.str);
+
+    Ok("ok")
+}
+
+//
+//
+//
+// #[post("/echo")]
+// async fn echo(req_body: String) -> impl Responder {
+//     HttpResponse::Ok().body(req_body)
+// }
+//
+// async fn manual_hello() -> impl Responder {
+//     HttpResponse::Ok().body("Hey there!")
+// }
+
+struct AppState {
+    conn: Conn,
+}
 
 #[no_mangle]
 pub extern "C" fn luaopen_tmcrud(_l: std::ffi::c_void) -> c_int {
-    // Tarantool calls this function upon require("easy")
-    println!("easy module loaded");
+    // let conn = net_box::Conn::new("localhost:3301", net_box::ConnOptions::default(), None).unwrap();
+    // let conn = Arc::new(Mutex::new(conn));
+
+    // thread::spawn(move || {
+    //     sleep(Duration::from_secs(2));
+    //     let conn = net_box::Conn::new("localhost:3301", net_box::ConnOptions::default(), None).unwrap();
+    //
+    //     // let sys = System::new("http-server");
+    //     //
+    //     // let srv = HttpServer::new(|| {
+    //     //     App::new()
+    //     //         // .data(conn.clone())
+    //     //         .route("/", web::get().to(|| HttpResponse::Ok()))
+    //     //         .service(hello)
+    //     // })
+    //     //     .bind("127.0.0.1:8080")?
+    //     //     .shutdown_timeout(60) // <- Set shutdown timeout to 60 seconds
+    //     //     .run();
+    //     //
+    //     // sys.run()
+    // });
+
+    println!("tmcrud module loaded");
     0
 }
 
 #[no_mangle]
 pub extern "C" fn tmcrud(_: FunctionCtx, _: FunctionArgs) -> c_int {
     println!("hello world");
+
+    thread::spawn(move || {
+        sleep(Duration::from_secs(2));
+        let conn = net_box::Conn::new("localhost:3301", net_box::ConnOptions::default(), None).unwrap();
+    });
+
     0
 }
 

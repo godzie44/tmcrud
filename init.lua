@@ -1,6 +1,7 @@
+box.cfg({listen = 3301})
+
 require('tmcrud')
 
-box.cfg({listen = 3301})
 box.schema.func.create('tmcrud', {language = 'C', if_not_exists = true})
 box.schema.func.create('tmcrud.read', {language = 'C', if_not_exists = true})
 box.schema.func.create('tmcrud.read_at', {language = 'C', if_not_exists = true})
